@@ -1,45 +1,20 @@
 import React from 'react';
+import TableRow from '@material-ui/core/TableRow';
+import TableCell from '@material-ui/core/TableCell';
 
 const Customer = (props) => {
   const { name, birthday, gender, job, id, image } = props;
   return (
-    <div>
-      <CustomerProfile
-        id={id}
-        image={image}
-        name={name}
-      />
-      <CustomerInfo 
-        birthday={birthday}
-        gender={gender}
-        job={job}
-      />
-    </div>
+      <TableRow>
+        <TableCell>{id}</TableCell>
+        <TableCell><img src={image} alt="profile" /></TableCell>
+        <TableCell>{name}</TableCell>
+        <TableCell>{birthday}</TableCell>
+        <TableCell>{gender}</TableCell>
+        <TableCell>{job}</TableCell>
+      </TableRow>
   );
 };
 
-const CustomerProfile = (props) => {
-  const { id, name, image } = props;
-  return (
-    <div>
-      <img src={image} alt="profile" />
-      <h2>
-        {name}
-        ({id})
-      </h2>
-    </div>
-  );
-};
-
-const CustomerInfo = (props) => {
-  const { birthday, gender, job } = props;
-  return (
-    <div>
-      <p>{birthday}</p>
-      <p>{gender}</p>
-      <p>{job}</p>
-    </div>
-  );
-};
 
 export default Customer;
