@@ -8,6 +8,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import { withStyles } from '@material-ui/core/styles';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const styles = (theme) => ({
   root: {
@@ -18,10 +19,14 @@ const styles = (theme) => ({
   table: {
     minWidth: 1080,
   },
+  progress: {
+    margin: theme.spacing.unut * 2,
+  },
 });
 
 const App = (props) => {
   const [customers, setCustomers] = useState('');
+  const [progress, setProgress] = useState(0);
   const { classes } = props;
 
   const callApi = async () => {
@@ -31,10 +36,24 @@ const App = (props) => {
   };
 
   useEffect(() => {
-    console.log('랜덩될때');
+    console.log('랜더링 되었다');
     callApi()
       .then((res) => setCustomers(res))
       .catch((err) => console.log(err));
+    function tick() {
+      // reset when reaching 100%
+      setProgress(
+        /* 이런식의 익명함수를 보기 좋게 쓰면 밑에것처럼 되는 것이다. 첫번째 ()는 파라미터, 두번째 ()는 함수식과 리턴값 자체를 의미한다. */
+        /* function(들어간놈){
+          return 들어간놈 >= 100 ? 0 : 들어간놈 + 1
+        } */
+        (들어간놈) => (들어간놈 >= 100 ? 0 : 들어간놈 + 1)
+      );
+    }
+    const timer = setInterval(tick, 20);
+    return () => {
+      clearInterval(timer);
+    };
   }, []);
 
   return (
@@ -51,22 +70,31 @@ const App = (props) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {customers
-            ? customers.map((c) => {
-                return (
-                  <Customer
-                    key={c.id}
-                    id={c.id}
-                    image={c.image}
-                    name={c.name}
-                    birthday={c.birthday}
-                    gender={c.gender}
-                    job={c.job}
-                  />
-                );
-              })
-            : ''}
-          ;
+          {customers ? (
+            customers.map((c) => {
+              return (
+                <Customer
+                  key={c.id}
+                  id={c.id}
+                  image={c.image}
+                  name={c.name}
+                  birthday={c.birthday}
+                  gender={c.gender}
+                  job={c.job}
+                />
+              );
+            })
+          ) : (
+            <TableRow>
+              <TableCell colSpan="6" align="center">
+                <CircularProgress
+                  className={classes.progress}
+                  variant="determinate"
+                  value={progress}
+                />
+              </TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
     </Paper>
