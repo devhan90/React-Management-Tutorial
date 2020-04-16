@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import Customer from './components/Customer';
 import Paper from '@material-ui/core/Table';
@@ -9,46 +9,34 @@ import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import { withStyles } from '@material-ui/core/styles';
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
     width: '100%',
     marginTop: theme.spacing.unit * 3,
-    overflowX: "auto"
+    overflowX: 'auto',
   },
   table: {
-    minWidth: 1080
-  }
-})
+    minWidth: 1080,
+  },
+});
 
-const customers = [
-  {
-    id: 1,
-    image: 'https://placeimg.com/64/64/1',
-    name: '홍길동',
-    birthday: '961222',
-    gender: '남자',
-    job: '대학생',
-  },
-  {
-    id: 2,
-    image: 'https://placeimg.com/64/64/2',
-    name: '최우석',
-    birthday: '911222',
-    gender: '남자',
-    job: '회사원',
-  },
-  {
-    id: 3,
-    image: 'https://placeimg.com/64/64/3',
-    name: '김한빛',
-    birthday: '900826',
-    gender: '남자',
-    job: '회사원',
-  },
-];
-
-function App(props) {
+const App = (props) => {
+  const [customers, setCustomers] = useState('');
   const { classes } = props;
+
+  const callApi = async () => {
+    const response = await fetch('/api/customers');
+    const body = await response.json();
+    return body;
+  };
+
+  useEffect(() => {
+    console.log('랜덩될때');
+    callApi()
+      .then((res) => setCustomers(res))
+      .catch((err) => console.log(err));
+  }, []);
+
   return (
     <Paper className={classes.root}>
       <Table className={classes.table}>
@@ -63,23 +51,26 @@ function App(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {customers.map((c) => {
-            return (
-              <Customer
-                key={c.id}
-                id={c.id}
-                image={c.image}
-                name={c.name}
-                birthday={c.birthday}
-                gender={c.gender}
-                job={c.job}
-              />
-            );
-          })}
+          {customers
+            ? customers.map((c) => {
+                return (
+                  <Customer
+                    key={c.id}
+                    id={c.id}
+                    image={c.image}
+                    name={c.name}
+                    birthday={c.birthday}
+                    gender={c.gender}
+                    job={c.job}
+                  />
+                );
+              })
+            : ''}
+          ;
         </TableBody>
       </Table>
     </Paper>
   );
-}
+};
 
 export default withStyles(styles)(App);
