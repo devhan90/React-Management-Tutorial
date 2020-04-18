@@ -51,6 +51,7 @@ const App = (props) => {
       );
     }
     const timer = setInterval(tick, 20);
+    console.log(customers);
     return () => {
       clearInterval(timer);
     };
