@@ -9,6 +9,8 @@ import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import { withStyles } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import CustomerAdd from './components/CustomerAdd';
+// import CustomerAdd from './components/CustomerAdd';
 
 const styles = (theme) => ({
   root: {
@@ -28,6 +30,14 @@ const App = (props) => {
   const [customers, setCustomers] = useState('');
   const [progress, setProgress] = useState(0);
   const { classes } = props;
+
+  const stateRefresh = () => {
+    setCustomers('');
+    setProgress(0);
+    callApi()
+      .then((res) => setCustomers(res))
+      .catch((err) => console.log(err));
+  }
 
   const callApi = async () => {
     const response = await fetch('/api/customers');
@@ -51,13 +61,14 @@ const App = (props) => {
       );
     }
     const timer = setInterval(tick, 20);
-    console.log(customers);
     return () => {
       clearInterval(timer);
+      setCustomers('');
     };
   }, []);
 
   return (
+    <>
     <Paper className={classes.root}>
       <Table className={classes.table}>
         <TableHead>
@@ -79,7 +90,7 @@ const App = (props) => {
                   id={c.id}
                   image={c.image}
                   name={c.name}
-                  birthday={c.birthday}
+                  birthDay={c.birthDay}
                   gender={c.gender}
                   job={c.job}
                 />
@@ -99,6 +110,8 @@ const App = (props) => {
         </TableBody>
       </Table>
     </Paper>
+    <CustomerAdd stateRefresh={stateRefresh} />
+    </>
   );
 };
 
